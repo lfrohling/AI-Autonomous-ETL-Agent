@@ -1,3 +1,7 @@
+# =========================================================
+# PROJECT #3: AI AUTONOMOUS ETL AGENT
+# DOCUMENTATION: [MERMAID DIAGRAM INSERTED HERE]
+# =========================================================
 import streamlit as st
 import pandas as pd
 import json

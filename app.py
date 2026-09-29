@@ -74,7 +74,7 @@ def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
             cleaned_records=[
                 CleanedRecord(vendor_id="VND-901", sku_code="PRM-BLK-XL", unit_price=124.50, quantity_on_hand=42, record_status="VALIDATED"),
                 CleanedRecord(vendor_id="VND-901", sku_code="SKU_123_ABC", unit_price=89.99, quantity_on_hand=0, record_status="VALIDATED"),
-                CleanedRecord(vendor_id="VND-804", sku_code="ILLEGAL SKU!", unit_price=0.00, quantity_on_hand=0, record_status="CORRUPTED")
+                CleanedRecord(vendor_id="VND-804", sku_code="UNKN-SKU-99", unit_price=0.00, quantity_on_hand=0, record_status="CORRUPTED")
             ]
         )
     try:

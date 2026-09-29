@@ -1,25 +1,28 @@
 # ==============================================================================
 # PROJECT THREE: AI AUTONOMOUS ETL AGENT
-# APPLICATION ARCHITECTURE: STREAMLIT + PYDANTIC + GOOGLE GENAI STRUCTURED LOGIC
+# FILE SUBSYSTEM: FRONT-END RENDERING USER INTERFACE ENGINE (app.py - PART 1)
+# DESCRIPTION: Manages the core presentation workspace tabs, interactive data
+#              grid operations, simulation toggle nodes, and CSV export loops.
 # ==============================================================================
 
 # Part One
 
 import streamlit as st
 import pandas as pd
-import json
-import re
-from pydantic import BaseModel, Field, field_validator, ValidationError
-from typing import List, Optional
 from google import genai
 from google.genai import types
+from pydantic import ValidationError
 
-# ==============================================================================
-# SECTION 1: SYSTEM AND PAGE CONFIGURATION INITIALIZATION
-# ==============================================================================
-# Sets up the wide web container layout viewport, sets page tab properties,
-# and establishes persistence for the pipeline execution state variables.
+# NATIVE SYSTEM INTEGRATION LAYER:
+# Imports the full suite of specialized architectural validation components and data contracts
+# directly from models.py to decouple presentation loops completely from parsing models.
+from models import MappedField, DataAnomaly, CleanedRecord, ETLPipelineOutput
 
+# ------------------------------------------------------------------------------
+# LAYOUT INITIALIZATION CONTEXT BLOCKS
+# ------------------------------------------------------------------------------
+# Configures global screen space bounds for a wide professional presentation layout
+# and initializes the local interactive web session state tracking variables.
 st.set_page_config(
     page_title="Project 3: AI Autonomous ETL Agent", 
     page_icon="⚙️", 
@@ -29,72 +32,17 @@ st.set_page_config(
 if "etl_results" not in st.session_state:
     st.session_state.etl_results = None
 
-
-# ==============================================================================
-# SECTION 2: PYDANTIC LOGICAL COMPLIANCE VALIDATION DATA SCHEMA MODELS
-# ==============================================================================
-# Establishes runtime data models with programmatic constraints, 
-# regex validations, and type-guard parameters to intercept malformed vendor inputs.
-
-class MappedField(BaseModel):
-    source_field_detected: str = Field(description="The name of the header found in the messy source data.")
-    target_canonical_field: str = Field(description="The matching enterprise target standard name like vendor_id or unit_price.")
-    transformation_applied: str = Field(description="The exact data scrubbing modification performed on the data format.")
-
-class DataAnomaly(BaseModel):
-    row_index: int = Field(description="Zero-indexed row placement where the validation anomaly occurred.")
-    invalid_field: str = Field(description="The column name containing the logical error structure.")
-    issue_description: str = Field(description="The explanation of why the entry data failed validation parameters.")
-
-class CleanedRecord(BaseModel):
-    vendor_id: str = Field(description="Standardized Alpha-Numeric ID string sequence.")
-    sku_code: str = Field(description="Normalized upper-case product SKU sequence validation format.")
-    unit_price: float = Field(description="Cleaned numeric floating decimal price value parameters.")
-    quantity_on_hand: int = Field(description="Validated non-negative integer asset volume count numbers.")
-    record_status: str = Field(description="Mark either VALIDATED or CORRUPTED based on field rules.")
-
-    @field_validator("sku_code")
-    @classmethod
-    def validate_sku_format(cls, value: str) -> str:
-        """
-        Regex Type-Guard Validator: Enforces alphanumeric SKU segments 
-        separated by hyphens or underscores (e.g., PRM-BLK-XL or SKU_123_ABC).
-        """
-        clean_value = value.strip().upper()
-        sku_pattern = r"^[A-Z0-9]+([-_][A-Z0-9]+)*$"
-        if not re.match(sku_pattern, clean_value):
-            raise ValueError("SKU formatting pattern violation detected. Expected alphanumeric sequence segments separated cleanly by hyphens or underscores.")
-        return clean_value
-
-    @field_validator("quantity_on_hand")
-    @classmethod
-    def validate_quantity_bounds(cls, value: int) -> int:
-        """
-        Value Boundary Type-Guard Validator: Explicitly prevents inventory asset
-        volumes from representing negative numbers under corporate tracking rules.
-        """
-        if value < 0:
-            raise ValueError("Inventory asset volumes cannot represent negative numerical definitions.")
-        return value
-
-class ETLPipelineOutput(BaseModel):
-    schema_mapping_log: List[MappedField] = Field(description="Architectural ledger detailing how the source fields matched enterprise schemas.")
-    systemic_anomalies: List[DataAnomaly] = Field(description="Comprehensive catalog of semantic and physical input validation failures.")
-    cleaned_records: List[CleanedRecord] = Field(description="The resulting sanitized inventory database entities.")
-
-
-# ==============================================================================
-# SECTION 3: SYSTEM RUNTIME SIDEBAR CONTROL PANELS
-# ==============================================================================
-# Renders platform switch mechanics to toggle between local offline mock 
-# simulation testing and active production API calls, safeguarding request token limits.
-
+# ------------------------------------------------------------------------------
+# SIDEBAR RUNTIME CONTROL ENVIRONMENT PANEL
+# ------------------------------------------------------------------------------
+# Mounts explicit user switches to prevent credential leaking, isolate workflows, 
+# and safely demonstrate execution routing features to hiring managers without depleting key tokens.
 st.sidebar.header("ETL System Control Panel")
 
 recruiter_mode = st.sidebar.toggle(
     label="Recruiter Simulator Mode", 
     value=True, 
-    help="When active, this bypasses live Gemini 3.5 execution and yields static structural responses to evaluate system routing mechanics safely."
+    help="When active, this completely bypasses live external AI server calls to protect daily request limits while yielding structural response sets."
 )
 
 if recruiter_mode:
@@ -102,18 +50,14 @@ if recruiter_mode:
 else:
     st.sidebar.warning("Live API Enabled: Consuming Quota (20 Requests per Day Limit)")
 
-
-
-# Part Two
-
-# ==============================================================================
-# SECTION 4: CORE ETL PIPELINE EXECUTION LOOPS AND INTERCEPTION
-# ==============================================================================
-# Manages raw text parsing, structural Gemini 3.5 Flash schema mapping constraints,
-# and isolated row-level transaction iteration loops to handle database payload conversions.
-
+# ------------------------------------------------------------------------------
+# PROCESSING ENGINE: LOGICAL ASYNC SCHEDULER OPERATIONS
+# ------------------------------------------------------------------------------
+# Orchestrates transactional record validation cycles, transforms interface variables, 
+# and uses individual try-except blocks to catch row-level exceptions smoothly.
 def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
-    # --- SUB-BLOCK 4A: RECRUITER SIMULATION FALLBACK TRACKING ---
+    
+    # SYSTEM PATH A: DETERMINISTIC FALLBACK MOCK DATA INJECTION
     if recruiter_mode:
         return ETLPipelineOutput(
             schema_mapping_log=[
@@ -123,17 +67,20 @@ def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
                 MappedField(source_field_detected="Asset Qty", target_canonical_field="quantity_on_hand", transformation_applied="Parsed text to non-negative numerical integer sequences.")
             ],
             systemic_anomalies=[
-                DataAnomaly(row_index=2, invalid_field="quantity_on_hand", issue_description="Value bounds violation: Inventory quantity cannot be a negative value (Found: -5).")
+                DataAnomaly(row_index=3, invalid_field="quantity_on_hand", issue_description="Value bounds violation: Inventory quantity cannot be a negative value (Found: -12)."),
+                DataAnomaly(row_index=2, invalid_field="sku_code", issue_description="Type guard violation: SKU formatting pattern violation detected. Expected alphanumeric sequence segments separated cleanly by hyphens or underscores.")
             ],
             cleaned_records=[
                 CleanedRecord(vendor_id="VND-901", sku_code="PRM-BLK-XL", unit_price=124.50, quantity_on_hand=42, record_status="VALIDATED"),
                 CleanedRecord(vendor_id="VND-901", sku_code="SKU_123_ABC", unit_price=89.99, quantity_on_hand=0, record_status="VALIDATED"),
-                CleanedRecord(vendor_id="VND-804", sku_code="UNKN-SKU-99", unit_price=0.00, quantity_on_hand=0, record_status="CORRUPTED")
+                CleanedRecord(vendor_id="VND-804", sku_code="UNKN-SKU-99", unit_price=0.00, quantity_on_hand=25, record_status="CORRUPTED"),
+                CleanedRecord(vendor_id="VND-101", sku_code="PRM-BLU-SM", unit_price=89.00, quantity_on_hand=0, record_status="CORRUPTED")
             ]
         )
 
-    # --- SUB-BLOCK 4B: LIVE PRODUCTION GOOGLE GENAI EXECUTION ENGINE ---
+    # SYSTEM PATH B: LIVE INFERENCE TRANSACTION PROCESSING LOGIC
     try:
+        # Accesses secure credentials safely from the host environment vault block
         api_key = st.secrets["GEMINI_API_KEY"]
         client = genai.Client(api_key=api_key)
         
@@ -144,6 +91,7 @@ def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
             f"vendor_id, sku_code, unit_price, quantity_on_hand. Output a single valid JSON structure matching schema rules."
         )
         
+        # Requests structured JSON formatting output that strictly maps to the data output contract model
         response = client.models.generate_content(
             model="gemini-3.5-flash",
             contents=prompt,
@@ -154,10 +102,14 @@ def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
             ),
         )
         
+        # Validates base response schema attributes completely
         raw_output = ETLPipelineOutput.model_validate_json(response.text)
         validated_records = []
         
-        # --- SUB-BLOCK 4C: ISOLATED TRANSACTION VALIDATION LOOP ---
+        # ROW-BY-ROW ISOLATION LOOP MECHANISM:
+        # Iterates over individual row models sequentially. If a specific index row contains 
+        # bad data, it converts its status to CORRUPTED and logs the precise error metrics 
+        # inside the monitoring ledger, preventing complete application failure.
         for index, record in enumerate(raw_output.cleaned_records):
             try:
                 CleanedRecord.model_validate(record.model_dump())
@@ -183,18 +135,18 @@ def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
         return None
 
 
-# ==============================================================================
-# SECTION 5: FRONT-END INTERACTIVE USER INTERACTION GRID INPUT SCREEN
-# ==============================================================================
-# Displays layout titles, prompts, and configures an advanced interactive tabular data editor
-# grid component placed independently outside form blocks to fully preserve cloud interface memory states.
+# Part Two
 
+# ==============================================================================
+# SECTION 5: FRONT-END USER CORE WORKSPACE SCREEN DESIGN
+# ==============================================================================
+# Renders presentation titles, application descriptors, captions, and text blocks.
 st.title("AI Autonomous ETL Agent")
 st.caption("Project 3 Portfolio Build - Real world Business ROI Engine Modeling Complex Schema Alignments via Gemini 3.5 Flash")
 
 st.write("Enter Vendor Record Rows Below (Data is Automatically Segregated into Structured Columns)")
 
-# Define the base data frame properties clearly
+# Baseline testing dataframe profile (Contains 2 fully clear rows, and 2 target validation error tests)
 template_input_data = pd.DataFrame([
     {"Vendor ID Code": "VND-901", "Product SKU": "PRM-BLK-XL", "Item Price": "$124.50", "Asset Qty": "42"},
     {"Vendor ID Code": "VND-901", "Product SKU": "SKU_123_ABC", "Item Price": "$89.99", "Asset Qty": "0"},
@@ -202,7 +154,9 @@ template_input_data = pd.DataFrame([
     {"Vendor ID Code": "VND-101", "Product SKU": "PRM-BLU-SM", "Item Price": "$89.00", "Asset Qty": "-12"}
 ])
 
-# FIXED DECOUPLING ELEMENT: Placed completely outside form limits to remove cell state modification errors
+# CRITICAL SCREEN DESIGN REFACTOR:
+# Placed completely independent and above the form statement box. This avoids state mutations, 
+# enables spreadsheet data cell typing changes, and stops page-load TypeError framework crashes.
 edited_df = st.data_editor(
     template_input_data,
     key="vendor_data_grid",
@@ -210,33 +164,32 @@ edited_df = st.data_editor(
     help="Edit individual grid cells directly. Data auto-segregates dynamically upon execution."
 )
 
+# Unified isolated form block safely contains ONLY the standalone pipeline submission trigger execution button
 with st.form("etl_pipeline_form"):
-    # The unified form wrapper now encloses ONLY the processing submit trigger to insulate live executions
     submit_button = st.form_submit_button("Execute Pipeline")
     
     if submit_button:
         with st.spinner("Extracting, transforming, and validating dataset..."):
+            # flattens row configurations into clean flat CSV raw data text strings for processing
             raw_csv_string = edited_df.to_csv(index=False)
             st.session_state.etl_results = process_autonomous_etl(raw_csv_string)
 
-
-# ==============================================================================
-# SECTION 6: WORKSPACE DISPLAY MONITOR TABS AND EXPORT SYSTEM
-# ==============================================================================
-# Renders processing results in categorized tab structures, provides live alerts for tracking
-# processing failures, and mounts dynamic download export utilities.
-
+# ------------------------------------------------------------------------------
+# ANALYTICS WORKSPACE: DISPLAY TABS PANELS & SPREADSHEET DISPATCH EXPORTERS
+# ------------------------------------------------------------------------------
+# Evaluates existing database states and splits information fields across tabbed grid segments.
 if st.session_state.etl_results:
     res = st.session_state.etl_results
     
     tab1, tab2, tab3 = st.tabs(["Cleaned Records", "Schema Mapping Log", "Systemic Anomalies"])
     
-    # --- SUB-BLOCK 6A: SANITIZED RECORD DISPLAY AND DOWNLOAD ARRAYS ---
+    # WORKSPACE SUB-BLOCK A: COMPLIANT RECORD MATRICES & EXPORTERS
     with tab1:
         if res.cleaned_records:
             df_clean = pd.DataFrame([r.model_dump() for r in res.cleaned_records])
             st.dataframe(df_clean, use_container_width=True)
             
+            # Converts the pandas table block cleanly into downloadable text array files instantly
             csv_clean = df_clean.to_csv(index=False).encode('utf-8')
             st.download_button(
                 label="Export Cleaned Records to CSV",
@@ -247,7 +200,7 @@ if st.session_state.etl_results:
         else:
             st.info("No records produced.")
             
-    # --- SUB-BLOCK 6A: STRUCTURAL AI ALIGNMENT OPERATION AUDIT LOGS ---
+    # WORKSPACE SUB-BLOCK B: AI HEURISTIC MAPPING TRACE LOG RECORDS
     with tab2:
         if res.schema_mapping_log:
             df_map = pd.DataFrame([m.model_dump() for m in res.schema_mapping_log])
@@ -263,7 +216,7 @@ if st.session_state.etl_results:
         else:
             st.info("No schema mapping records logged.")
             
-    # --- SUB-BLOCK 6C: EXCEPTION ANALYTICS DISPATCH LOG LEDGERS ---
+    # WORKSPACE SUB-BLOCK C: EXCEPTION LEDGER GRAPH RECORDS & ALERTS
     with tab3:
         if res.systemic_anomalies:
             df_anom = pd.DataFrame([a.model_dump() for a in res.systemic_anomalies])

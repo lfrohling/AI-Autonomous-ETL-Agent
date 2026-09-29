@@ -119,13 +119,16 @@ st.caption("Project 3 Portfolio Build - Real world Business ROI Engine Modeling 
 
 default_messy_dump = "Vndr-Code | StockKeepingUnit | ItemCost | Qty\nVND-901 | PRM-BLK-XL | $124.50 | 42\nVND-901 | SKU_123_ABC | $89.99 | 0\nVND-804 | ILLEGAL SKU! | 0.00 | -5"
 
+default_no_header_dump = "VND-901 | PRM-BLK-XL | $124.50 | 42\nVND-901 | SKU_123_ABC | $89.99 | 0\nVND-804 | BAD SKU #1 | 0.00 | -5"
+
 with st.form("etl_pipeline_form"):
-    input_text = st.text_area("Raw Vendor Data Dump", value=default_messy_dump, height=150)
+    input_text = st.text_area("Raw Vendor Data Dump (Headers Optional - AI Will Auto-Discover Columns)", value=default_no_header_dump, height=150)
     submit_button = st.form_submit_button("Execute Pipeline")
     
     if submit_button:
         with st.spinner("Extracting, transforming, and validating dataset..."):
             st.session_state.etl_results = process_autonomous_etl(input_text)
+
 
 if st.session_state.etl_results:
     res = st.session_state.etl_results

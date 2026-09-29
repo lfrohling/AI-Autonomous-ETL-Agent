@@ -50,12 +50,12 @@ def get_clean_empty_framework():
 
 template_input_data = get_clean_empty_framework()
 
-# FIXED IMPLEMENTATION: Removed the illegal 'help' parameter to clear the system crash for good
+# FIXED DEPRECATION IMPLEMENTATION: Swapped out use_container_width for width='stretch'
 edited_df = st.data_editor(
     template_input_data,
     key="vendor_data_grid",
     num_rows="dynamic",
-    use_container_width=True
+    width="stretch"
 )
 
 with st.form("etl_pipeline_form"):
@@ -76,7 +76,7 @@ if st.session_state.etl_results:
     with tab1:
         if res.cleaned_records:
             df_clean = pd.DataFrame([r.model_dump() for r in res.cleaned_records])
-            st.dataframe(df_clean, use_container_width=True)
+            st.dataframe(df_clean, width="stretch")
             st.download_button(label="Export Cleaned Records to CSV", data=df_clean.to_csv(index=False).encode('utf-8'), file_name="cleaned_records.csv", mime="text/csv")
         else:
             st.info("No records produced.")
@@ -84,7 +84,7 @@ if st.session_state.etl_results:
     with tab2:
         if res.schema_mapping_log:
             df_map = pd.DataFrame([m.model_dump() for m in res.schema_mapping_log])
-            st.dataframe(df_map, use_container_width=True)
+            st.dataframe(df_map, width="stretch")
             st.download_button(label="Export Schema Mapping Log to CSV", data=df_map.to_csv(index=False).encode('utf-8'), file_name="schema_mapping_log.csv", mime="text/csv")
         else:
             st.info("No schema mapping records logged.")
@@ -92,7 +92,7 @@ if st.session_state.etl_results:
     with tab3:
         if res.systemic_anomalies:
             df_anom = pd.DataFrame([a.model_dump() for a in res.systemic_anomalies])
-            st.dataframe(df_anom, use_container_width=True)
+            st.dataframe(df_anom, width="stretch")
             st.warning("Data anomalies were recorded in the source files during mapping cycles.")
         else:
             st.success("Zero architectural or semantic errors identified within the data structure.")

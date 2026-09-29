@@ -103,6 +103,7 @@ else:
     st.sidebar.warning("Live API Enabled: Consuming Quota (20 Requests per Day Limit)")
 
 
+
 # Part Two
 
 # ==============================================================================
@@ -186,14 +187,14 @@ def process_autonomous_etl(raw_data_string: str) -> ETLPipelineOutput:
 # SECTION 5: FRONT-END INTERACTIVE USER INTERACTION GRID INPUT SCREEN
 # ==============================================================================
 # Displays layout titles, prompts, and configures an advanced interactive tabular data editor
-# grid component inside an isolated form block to enable direct spreadsheet manipulation.
+# grid component placed independently outside form blocks to fully preserve cloud interface memory states.
 
 st.title("AI Autonomous ETL Agent")
 st.caption("Project 3 Portfolio Build - Real world Business ROI Engine Modeling Complex Schema Alignments via Gemini 3.5 Flash")
 
 st.write("Enter Vendor Record Rows Below (Data is Automatically Segregated into Structured Columns)")
 
-# Expanded template showing a 4-row layout grid structure (2 valid examples, 2 clear anomaly test setups)
+# Define the base data frame properties clearly
 template_input_data = pd.DataFrame([
     {"Vendor ID Code": "VND-901", "Product SKU": "PRM-BLK-XL", "Item Price": "$124.50", "Asset Qty": "42"},
     {"Vendor ID Code": "VND-901", "Product SKU": "SKU_123_ABC", "Item Price": "$89.99", "Asset Qty": "0"},
@@ -201,20 +202,20 @@ template_input_data = pd.DataFrame([
     {"Vendor ID Code": "VND-101", "Product SKU": "PRM-BLU-SM", "Item Price": "$89.00", "Asset Qty": "-12"}
 ])
 
+# FIXED DECOUPLING ELEMENT: Placed completely outside form limits to remove cell state modification errors
+edited_df = st.data_editor(
+    template_input_data,
+    key="vendor_data_grid",
+    use_container_width=True,
+    help="Edit individual grid cells directly. Data auto-segregates dynamically upon execution."
+)
+
 with st.form("etl_pipeline_form"):
-    # FIX: Removed num_rows="dynamic" to resolve the form block container mutation collision error completely
-    edited_df = st.data_editor(
-        template_input_data,
-        key="vendor_data_grid",
-        use_container_width=True,
-        help="Edit individual grid cells directly. Data auto-segregates dynamically upon execution."
-    )
-    
+    # The unified form wrapper now encloses ONLY the processing submit trigger to insulate live executions
     submit_button = st.form_submit_button("Execute Pipeline")
     
     if submit_button:
         with st.spinner("Extracting, transforming, and validating dataset..."):
-            # Flatten spreadsheet lines to flat text stream structures for the parsing engine
             raw_csv_string = edited_df.to_csv(index=False)
             st.session_state.etl_results = process_autonomous_etl(raw_csv_string)
 
@@ -246,7 +247,7 @@ if st.session_state.etl_results:
         else:
             st.info("No records produced.")
             
-    # --- SUB-BLOCK 6B: STRUCTURAL AI ALIGNMENT OPERATION AUDIT LOGS ---
+    # --- SUB-BLOCK 6A: STRUCTURAL AI ALIGNMENT OPERATION AUDIT LOGS ---
     with tab2:
         if res.schema_mapping_log:
             df_map = pd.DataFrame([m.model_dump() for m in res.schema_mapping_log])

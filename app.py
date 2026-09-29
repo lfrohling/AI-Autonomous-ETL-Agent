@@ -41,25 +41,23 @@ st.title("AI Autonomous ETL Agent")
 st.caption("Project 3 Portfolio Build - Real world Business ROI Engine Modeling Complex Schema Alignments via Gemini 3.5 Flash")
 st.write("Enter Vendor Record Rows Below (Data is Automatically Segregated into Structured Columns)")
 
-# FIXED MEMORY ANCHOR: Wrap baseline data inside an absolute deterministic caching ring
-# This completely blocks memory mutation crashes when Streamlit reruns.
+# FIXED PLATFORM ENGINE FIX: Define a clean grid structure with NO hardcoded sample content strings.
+# This prevents Streamlit Arrow from crashing due to unexpected special character data types on page load.
 @st.cache_data
-def get_immutable_input_template():
-    return pd.DataFrame([
-        {"Vendor ID Code": "VND-901", "Product SKU": "PRM-BLK-XL", "Item Price": "$124.50", "Asset Qty": "42"},
-        {"Vendor ID Code": "VND-901", "Product SKU": "SKU_123_ABC", "Item Price": "$89.99", "Asset Qty": "0"},
-        {"Vendor ID Code": "VND-804", "Product SKU": "BAD SKU #1", "Item Price": "0.00", "Asset Qty": "25"},
-        {"Vendor ID Code": "VND-101", "Product SKU": "PRM-BLU-SM", "Item Price": "$89.00", "Asset Qty": "-12"}
-    ])
+def get_clean_empty_framework():
+    return pd.DataFrame(
+        columns=["Vendor ID Code", "Product SKU", "Item Price", "Asset Qty"]
+    )
 
-template_input_data = get_immutable_input_template()
+template_input_data = get_clean_empty_framework()
 
-# Render interactive table grid outside form blocks to fully protect interface states
+# Render the clean spreadsheet template box. Users can type directly into cells or copy-paste rows.
 edited_df = st.data_editor(
     template_input_data,
     key="vendor_data_grid",
+    num_rows="dynamic",
     use_container_width=True,
-    help="Edit individual grid cells directly. Data auto-segregates dynamically upon execution."
+    help="Type values or paste table data rows directly into the columns."
 )
 
 with st.form("etl_pipeline_form"):

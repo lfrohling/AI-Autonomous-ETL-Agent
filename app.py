@@ -41,8 +41,7 @@ st.title("AI Autonomous ETL Agent")
 st.caption("Project 3 Portfolio Build - Real world Business ROI Engine Modeling Complex Schema Alignments via Gemini 3.5 Flash")
 st.write("Enter Vendor Record Rows Below (Data is Automatically Segregated into Structured Columns)")
 
-# FIXED PLATFORM ENGINE FIX: Define a clean grid structure with NO hardcoded sample content strings.
-# This prevents Streamlit Arrow from crashing due to unexpected special character data types on page load.
+# Define a clean grid structure with pre-set target columns.
 @st.cache_data
 def get_clean_empty_framework():
     return pd.DataFrame(
@@ -51,13 +50,12 @@ def get_clean_empty_framework():
 
 template_input_data = get_clean_empty_framework()
 
-# Render the clean spreadsheet template box. Users can type directly into cells or copy-paste rows.
+# FIXED IMPLEMENTATION: Removed the illegal 'help' parameter to clear the system crash for good
 edited_df = st.data_editor(
     template_input_data,
     key="vendor_data_grid",
     num_rows="dynamic",
-    use_container_width=True,
-    help="Type values or paste table data rows directly into the columns."
+    use_container_width=True
 )
 
 with st.form("etl_pipeline_form"):

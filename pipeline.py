@@ -11,8 +11,8 @@ from google import genai
 from google.genai import types
 from pydantic import ValidationError
 
-# Bring in our data contract components cleanly from models.py
-from models import MappedField, DataAnomaly, CleanedRecord, ETLPipelineOutput
+# Bring in our components and tracking frameworks from models.py
+from models import MappedField, DataAnomaly, CleanedRecord, ETLPipelineOutput, RawRecordInput
 
 def run_etl_pipeline(raw_data_string: str, recruiter_mode: bool) -> ETLPipelineOutput:
     """Executes structural data parsing via Mock Simulator or Live GenAI endpoints."""
@@ -31,10 +31,10 @@ def run_etl_pipeline(raw_data_string: str, recruiter_mode: bool) -> ETLPipelineO
                 DataAnomaly(row_index=2, invalid_field="sku_code", issue_description="Type guard violation: SKU formatting pattern violation detected. Expected alphanumeric sequence segments separated cleanly by hyphens or underscores.")
             ],
             cleaned_records=[
-                CleanedRecord(vendor_id="VND-901", sku_code="PRM-BLK-XL", unit_price=124.50, quantity_on_hand=42, record_status="VALIDATED"),
-                CleanedRecord(vendor_id="VND-901", sku_code="SKU_123_ABC", unit_price=89.99, quantity_on_hand=0, record_status="VALIDATED"),
-                CleanedRecord(vendor_id="VND-804", sku_code="UNKN-SKU-99", unit_price=0.00, quantity_on_hand=25, record_status="CORRUPTED"),
-                CleanedRecord(vendor_id="VND-101", sku_code="PRM-BLU-SM", unit_price=89.00, quantity_on_hand=0, record_status="CORRUPTED")
+                RawRecordInput(vendor_id="VND-901", sku_code="PRM-BLK-XL", unit_price=124.50, quantity_on_hand=42, record_status="VALIDATED"),
+                RawRecordInput(vendor_id="VND-901", sku_code="SKU_123_ABC", unit_price=89.99, quantity_on_hand=0, record_status="VALIDATED"),
+                RawRecordInput(vendor_id="VND-804", sku_code="UNKN-SKU-99", unit_price=0.00, quantity_on_hand=25, record_status="CORRUPTED"),
+                RawRecordInput(vendor_id="VND-101", sku_code="PRM-BLU-SM", unit_price=89.00, quantity_on_hand=0, record_status="CORRUPTED")
             ]
         )
 
@@ -60,22 +60,28 @@ def run_etl_pipeline(raw_data_string: str, recruiter_mode: bool) -> ETLPipelineO
             ),
         )
         
+        # Ingests base framework fields safely using flexible staging arrays
         raw_output = ETLPipelineOutput.model_validate_json(response.text)
         validated_records = []
         
-        # ROW-BY-ROW ISOLATION LOOP: Intercepts single malformed strings without dropping execution
+        # ROW-BY-ROW ISOLATION LOOP BLOCK:
+        # Runs the strict Pydantic model gatekeeper evaluation checks individually on each row segment.
+        # This accurately routes dirty inputs directly into anomalies ledgers without crashing the system thread.
         for index, record in enumerate(raw_output.cleaned_records):
             try:
+                # Tests the raw staging item against strict uppercase regex and integer boundary checks
                 CleanedRecord.model_validate(record.model_dump())
+                record.record_status = "VALIDATED"
                 validated_records.append(record)
             except ValidationError as ve:
+                # Catch compliance errors, flag row status, and isolate the exact trace breakdown parameters
                 record.record_status = "CORRUPTED"
                 validated_records.append(record)
                 for err in ve.errors():
                     raw_output.systemic_anomalies.append(
                         DataAnomaly(
                             row_index=index, 
-                            invalid_field=str(err["loc"] if err["loc"] else "Field"), 
+                            invalid_field=str(err["loc"][0] if err["loc"] else "Field"), 
                             issue_description=f"Type guard violation: {err['msg']}"
                         )
                     )

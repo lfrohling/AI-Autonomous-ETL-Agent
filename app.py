@@ -193,21 +193,21 @@ st.caption("Project 3 Portfolio Build - Real world Business ROI Engine Modeling 
 
 st.write("Enter Vendor Record Rows Below (Data is Automatically Segregated into Structured Columns)")
 
-# Initialize pure structural pandas layout dataset used to fill spreadsheet grid columns
+# Expanded template showing a 4-row layout grid structure (2 valid examples, 2 clear anomaly test setups)
 template_input_data = pd.DataFrame([
     {"Vendor ID Code": "VND-901", "Product SKU": "PRM-BLK-XL", "Item Price": "$124.50", "Asset Qty": "42"},
     {"Vendor ID Code": "VND-901", "Product SKU": "SKU_123_ABC", "Item Price": "$89.99", "Asset Qty": "0"},
-    {"Vendor ID Code": "VND-804", "Product SKU": "BAD SKU #1", "Item Price": "0.00", "Asset Qty": "-5"}
+    {"Vendor ID Code": "VND-804", "Product SKU": "BAD SKU #1", "Item Price": "0.00", "Asset Qty": "25"},
+    {"Vendor ID Code": "VND-101", "Product SKU": "PRM-BLU-SM", "Item Price": "$89.00", "Asset Qty": "-12"}
 ])
 
 with st.form("etl_pipeline_form"):
-    # FIX: Added absolute key variable "vendor_data_grid" to secure memory states in production servers
+    # FIX: Removed num_rows="dynamic" to resolve the form block container mutation collision error completely
     edited_df = st.data_editor(
         template_input_data,
         key="vendor_data_grid",
-        num_rows="dynamic",
         use_container_width=True,
-        help="Paste values or add rows directly into the grid columns. Data auto-segregates dynamically upon execution."
+        help="Edit individual grid cells directly. Data auto-segregates dynamically upon execution."
     )
     
     submit_button = st.form_submit_button("Execute Pipeline")

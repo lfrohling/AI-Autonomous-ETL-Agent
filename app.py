@@ -102,6 +102,7 @@ if recruiter_mode:
 else:
     st.sidebar.warning("Live API Enabled: Consuming Quota (20 Requests per Day Limit)")
 
+
 # Part Two
 
 # ==============================================================================
@@ -200,9 +201,10 @@ template_input_data = pd.DataFrame([
 ])
 
 with st.form("etl_pipeline_form"):
-    # Streamlit Interactive Spreadsheet Component Workspace Node
+    # FIX: Added absolute key variable "vendor_data_grid" to secure memory states in production servers
     edited_df = st.data_editor(
         template_input_data,
+        key="vendor_data_grid",
         num_rows="dynamic",
         use_container_width=True,
         help="Paste values or add rows directly into the grid columns. Data auto-segregates dynamically upon execution."

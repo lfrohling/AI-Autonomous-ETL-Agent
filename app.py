@@ -121,13 +121,30 @@ default_messy_dump = "Vndr-Code | StockKeepingUnit | ItemCost | Qty\nVND-901 | P
 
 default_no_header_dump = "VND-901 | PRM-BLK-XL | $124.50 | 42\nVND-901 | SKU_123_ABC | $89.99 | 0\nVND-804 | BAD SKU #1 | 0.00 | -5"
 
+st.write("Enter Vendor Record Rows Below (Data is Automatically Segregated into Structured Columns)")
+
+if "input_df" not in st.session_state:
+    st.session_state.input_df = pd.DataFrame([
+        {"Vendor ID Code": "VND-901", "Product SKU": "PRM-BLK-XL", "Item Price": "$124.50", "Asset Qty": "42"},
+        {"Vendor ID Code": "VND-901", "Product SKU": "SKU_123_ABC", "Item Price": "$89.99", "Asset Qty": "0"},
+        {"Vendor ID Code": "VND-804", "Product SKU": "BAD SKU #1", "Item Price": "0.00", "Asset Qty": "-5"}
+    ])
+
 with st.form("etl_pipeline_form"):
-    input_text = st.text_area("Raw Vendor Data Dump (Headers Optional - AI Will Auto-Discover Columns)", value=default_no_header_dump, height=150)
+    edited_df = st.data_editor(
+        st.session_state.input_df,
+        num_rows="dynamic",
+        use_container_width=True,
+        help="Paste values or add rows directly into the grid columns. Data auto-segregates dynamically upon execution."
+    )
+    
     submit_button = st.form_submit_button("Execute Pipeline")
     
     if submit_button:
         with st.spinner("Extracting, transforming, and validating dataset..."):
-            st.session_state.etl_results = process_autonomous_etl(input_text)
+            raw_csv_string = edited_df.to_csv(index=False)
+            st.session_state.etl_results = process_autonomous_etl(raw_csv_string)
+
 
 
 if st.session_state.etl_results:
